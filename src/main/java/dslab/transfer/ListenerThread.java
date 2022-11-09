@@ -29,8 +29,8 @@ import java.util.concurrent.Executors;
 public final class ListenerThread extends Thread implements CloseableResource {
 
     private static final Log LOG =
-        LogFactory.getLog(MethodHandles.lookup().lookupClass());
-    private static final int POOL_SIZE = 16;
+            LogFactory.getLog(MethodHandles.lookup().lookupClass());
+    private static final int POOL_SIZE = 8;
     private final ServerSocket serverSocket;
     private final BlockingQueue<DMTPMessage> messageQueue;
     private final DomainLookup domainLookup;
@@ -57,7 +57,7 @@ public final class ListenerThread extends Thread implements CloseableResource {
             try {
                 socket = serverSocket.accept();
                 producerPool.submit(
-                    new DMTPReaderThread(socket, messageQueue));
+                        new DMTPReaderThread(socket, messageQueue));
             } catch (SocketException e) {
                 LOG.error("SocketException while handling socket", e);
                 break;
@@ -74,7 +74,7 @@ public final class ListenerThread extends Thread implements CloseableResource {
     private void startConsumer() {
         for (int i = 0; i < POOL_SIZE; i++) {
             consumerPool.submit(
-                new DMTPForwarderThread(config, domainLookup, messageQueue));
+                    new DMTPForwarderThread(config, domainLookup, messageQueue));
         }
     }
 

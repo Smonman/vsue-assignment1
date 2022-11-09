@@ -8,6 +8,7 @@ import dslab.protocol.general.ExtendableErrorResponse;
 import dslab.protocol.general.ExtendableOkResponse;
 import dslab.protocol.general.exception.InstructionNotFoundException;
 import dslab.protocol.general.exception.InvalidInstructionException;
+import dslab.transfer.socket.SocketManager;
 import dslab.util.CloseableResource;
 import dslab.util.wrapper.PrintWrapper;
 import dslab.util.wrapper.ReaderWrapper;
@@ -28,23 +29,27 @@ import java.util.concurrent.BlockingQueue;
 public class DMTPReaderThread extends Thread
     implements PrintWrapper, ReaderWrapper, CloseableResource,
     ExtendableOkResponse, ExtendableErrorResponse {
-
     private static final Log LOG =
         LogFactory.getLog(MethodHandles.lookup().lookupClass());
     private final Socket socket;
     private final BlockingQueue<DMTPMessage> messagesQueue;
     private final Hook<Boolean, String> acceptHook;
     private final Hook<Boolean, String> isKnownHook;
+    private final SocketManager socketManager;
+    private final int index;
     private DMTPParser dmtpParser;
 
     public DMTPReaderThread(final Socket socket,
-                            final BlockingQueue<DMTPMessage> messageQueue) {
+                            final BlockingQueue<DMTPMessage> messageQueue,
+                            final SocketManager socketManager) {
         this.socket = socket;
         this.messagesQueue = messageQueue;
         this.acceptHook = s -> true;
         this.isKnownHook = s -> true;
         this.dmtpParser =
             new DMTPParser(new DMTPInstructionMap(acceptHook, isKnownHook));
+        this.socketManager = socketManager;
+        this.index = socketManager.put(socket);
     }
 
     @Override
@@ -59,15 +64,15 @@ public class DMTPReaderThread extends Thread
 
     @Override
     public void run() {
-        BufferedReader reader = null;
         PrintWriter writer = null;
+        BufferedReader reader = null;
         try {
             reader = new BufferedReader(
                 new InputStreamReader(socket.getInputStream()));
             writer = new PrintWriter(socket.getOutputStream());
             printlnToPrintWriter(writer, okResponse());
             String instruction;
-            while ((instruction = readLineFromBufferedReader(reader)) != null) {
+            while ((instruction = reader.readLine()) != null) {
                 try {
                     dmtpParser.parseInstruction(instruction);
                 } catch (InstructionNotFoundException e) {
@@ -101,9 +106,10 @@ public class DMTPReaderThread extends Thread
             closeCloseable(reader);
             closeCloseable(writer);
             closeCloseable(socket);
+            socketManager.remove(index);
         }
     }
-
+    
     private void addMessagesToQueue(final List<DMTPMessage> messages)
         throws InterruptedException {
         for (DMTPMessage message : messages) {

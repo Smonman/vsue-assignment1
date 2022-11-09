@@ -2,6 +2,7 @@ package dslab.transfer;
 
 import dslab.protocol.dmtp.message.DMTPMessage;
 import dslab.transfer.lookup.DomainLookup;
+import dslab.transfer.socket.SocketManager;
 import dslab.util.CloseableResource;
 import dslab.util.Config;
 import org.apache.commons.logging.Log;
@@ -17,6 +18,7 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 /**
  * An extension of {@code Thread}.
@@ -37,7 +39,7 @@ public final class ListenerThread extends Thread implements CloseableResource {
     private final ExecutorService producerPool;
     private final ExecutorService consumerPool;
     private final Config config;
-    private Socket socket;
+    private final SocketManager socketManager;
 
     public ListenerThread(final ServerSocket serverSocket,
                           final Config config) {
@@ -47,17 +49,18 @@ public final class ListenerThread extends Thread implements CloseableResource {
         this.domainLookup = new DomainLookup();
         this.producerPool = Executors.newFixedThreadPool(POOL_SIZE);
         this.consumerPool = Executors.newFixedThreadPool(POOL_SIZE);
-        this.socket = null;
+        this.socketManager = new SocketManager();
     }
 
     @Override
     public void run() {
         startConsumer();
+        Socket socket = null;
         while (!Thread.currentThread().isInterrupted()) {
             try {
                 socket = serverSocket.accept();
-                producerPool.submit(
-                        new DMTPReaderThread(socket, messageQueue));
+                producerPool.execute(
+                        new DMTPReaderThread(socket, messageQueue, socketManager));
             } catch (SocketException e) {
                 LOG.error("SocketException while handling socket", e);
                 break;
@@ -79,6 +82,7 @@ public final class ListenerThread extends Thread implements CloseableResource {
     }
 
     private void shutdown() {
+        closeCloseable(socketManager);
         shutdownAndAwaitTermination(consumerPool);
         shutdownAndAwaitTermination(producerPool);
     }

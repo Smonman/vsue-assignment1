@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="dslab.monitoring.MonitoringServerTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2022-11-07T14:18:15" hostname="SIMON-DESKTOP" time="6.026">
+  <properties/>
+  <testcase name="runAndShutdownMonitoringServer_createsAndStopsUdpSocketCorrectly" classname="dslab.monitoring.MonitoringServerTest" time="6.026"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[Nov. 07, 2022 3:18:15 NACHM. dslab.monitoring.MonitoringServerTest runAndShutdownMonitoringServer_createsAndStopsUdpSocketCorrectly
+INFORMATION: Starting thread with component dslab.monitoring.MonitoringServer@5435196a
+Nov. 07, 2022 3:18:18 NACHM. dslab.monitoring.MonitoringServerTest runAndShutdownMonitoringServer_createsAndStopsUdpSocketCorrectly
+INFORMATION: Trying to create socket on port 10738
+Nov. 07, 2022 3:18:18 NACHM. dslab.monitoring.MonitoringServerTest runAndShutdownMonitoringServer_createsAndStopsUdpSocketCorrectly
+INFORMATION: Shutting down component dslab.monitoring.MonitoringServer@5435196a
+Nov. 07, 2022 3:18:18 NACHM. dslab.monitoring.ListenerThread run
+SCHWERWIEGEND: An error occurred while waiting for or handling packet
+java.net.SocketException: socket closed
+	at java.base/java.net.DualStackPlainDatagramSocketImpl.socketReceiveOrPeekData(Native Method)
+	at java.base/java.net.DualStackPlainDatagramSocketImpl.receive0(DualStackPlainDatagramSocketImpl.java:124)
+	at java.base/java.net.AbstractPlainDatagramSocketImpl.receive(AbstractPlainDatagramSocketImpl.java:181)
+	at java.base/java.net.DatagramSocket.receive(DatagramSocket.java:814)
+	at dslab.monitoring.ListenerThread.run(ListenerThread.java:50)
+
+Nov. 07, 2022 3:18:21 NACHM. dslab.monitoring.MonitoringServerTest runAndShutdownMonitoringServer_createsAndStopsUdpSocketCorrectly
+INFORMATION: Waiting for thread to stop for component dslab.monitoring.MonitoringServer@5435196a
+]]></system-err>
+</testsuite>

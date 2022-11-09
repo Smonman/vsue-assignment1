@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta http-equiv="x-ua-compatible" content="IE=edge"/>
+<title>Test results - Class dslab.mailbox.MailboxServerTest</title>
+<link href="../css/base-style.css" rel="stylesheet" type="text/css"/>
+<link href="../css/style.css" rel="stylesheet" type="text/css"/>
+<script src="../js/report.js" type="text/javascript"></script>
+</head>
+<body>
+<div id="content">
+<h1>Class dslab.mailbox.MailboxServerTest</h1>
+<div class="breadcrumbs">
+<a href="../index.html">all</a> &gt; 
+<a href="../packages/dslab.mailbox.html">dslab.mailbox</a> &gt; MailboxServerTest</div>
+<div id="summary">
+<table>
+<tr>
+<td>
+<div class="summaryGroup">
+<table>
+<tr>
+<td>
+<div class="infoBox" id="tests">
+<div class="counter">1</div>
+<p>tests</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="failures">
+<div class="counter">0</div>
+<p>failures</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="ignored">
+<div class="counter">0</div>
+<p>ignored</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="duration">
+<div class="counter">3.028s</div>
+<p>duration</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</td>
+<td>
+<div class="infoBox success" id="successRate">
+<div class="percent">100%</div>
+<p>successful</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div id="tabs">
+<ul class="tabLinks">
+<li>
+<a href="#tab0">Tests</a>
+</li>
+<li>
+<a href="#tab1">Standard error</a>
+</li>
+</ul>
+<div id="tab0" class="tab">
+<h2>Tests</h2>
+<table>
+<thead>
+<tr>
+<th>Test</th>
+<th>Duration</th>
+<th>Result</th>
+</tr>
+</thead>
+<tr>
+<td class="success">runAndShutdownTransferServer_createsAndStopsTcpSocketCorrectly</td>
+<td class="success">3.028s</td>
+<td class="success">passed</td>
+</tr>
+</table>
+</div>
+<div id="tab1" class="tab">
+<h2>Standard error</h2>
+<span class="code">
+<pre>Nov. 07, 2022 3:17:50 NACHM. dslab.monitoring.MonitoringServerTest runAndShutdownTransferServer_createsAndStopsTcpSocketCorrectly
+INFORMATION: Starting thread with component dslab.mailbox.MailboxServer@7c44300e
+Nov. 07, 2022 3:17:50 NACHM. dslab.monitoring.MonitoringServerTest runAndShutdownTransferServer_createsAndStopsTcpSocketCorrectly
+INFORMATION: Waiting for DMTP socket to open on port 10732
+Nov. 07, 2022 3:17:50 NACHM. dslab.monitoring.MonitoringServerTest runAndShutdownTransferServer_createsAndStopsTcpSocketCorrectly
+INFORMATION: Waiting for DMAP socket to open on port 10733
+Nov. 07, 2022 3:17:50 NACHM. dslab.monitoring.MonitoringServerTest runAndShutdownTransferServer_createsAndStopsTcpSocketCorrectly
+INFORMATION: Shutting down component dslab.mailbox.MailboxServer@7c44300e
+Nov. 07, 2022 3:17:50 NACHM. dslab.mailbox.DMTPReaderThread run
+SCHWERWIEGEND: SocketException while handling socket
+java.net.SocketException: Software caused connection abort: recv failed
+	at java.base/java.net.SocketInputStream.socketRead0(Native Method)
+	at java.base/java.net.SocketInputStream.socketRead(SocketInputStream.java:115)
+	at java.base/java.net.SocketInputStream.read(SocketInputStream.java:168)
+	at java.base/java.net.SocketInputStream.read(SocketInputStream.java:140)
+	at java.base/sun.nio.cs.StreamDecoder.readBytes(StreamDecoder.java:284)
+	at java.base/sun.nio.cs.StreamDecoder.implRead(StreamDecoder.java:326)
+	at java.base/sun.nio.cs.StreamDecoder.read(StreamDecoder.java:178)
+	at java.base/java.io.InputStreamReader.read(InputStreamReader.java:185)
+	at java.base/java.io.BufferedReader.fill(BufferedReader.java:161)
+	at java.base/java.io.BufferedReader.readLine(BufferedReader.java:326)
+	at java.base/java.io.BufferedReader.readLine(BufferedReader.java:392)
+	at dslab.util.wrapper.ReaderWrapper.readLineFromBufferedReader(ReaderWrapper.java:9)
+	at dslab.mailbox.DMTPReaderThread.run(DMTPReaderThread.java:77)
+
+Nov. 07, 2022 3:17:50 NACHM. dslab.mailbox.DMAPReaderThread run
+SCHWERWIEGEND: SocketException while handling socket
+java.net.SocketException: Software caused connection abort: recv failed
+	at java.base/java.net.SocketInputStream.socketRead0(Native Method)
+	at java.base/java.net.SocketInputStream.socketRead(SocketInputStream.java:115)
+	at java.base/java.net.SocketInputStream.read(SocketInputStream.java:168)
+	at java.base/java.net.SocketInputStream.read(SocketInputStream.java:140)
+	at java.base/sun.nio.cs.StreamDecoder.readBytes(StreamDecoder.java:284)
+	at java.base/sun.nio.cs.StreamDecoder.implRead(StreamDecoder.java:326)
+	at java.base/sun.nio.cs.StreamDecoder.read(StreamDecoder.java:178)
+	at java.base/java.io.InputStreamReader.read(InputStreamReader.java:185)
+	at java.base/java.io.BufferedReader.fill(BufferedReader.java:161)
+	at java.base/java.io.BufferedReader.readLine(BufferedReader.java:326)
+	at java.base/java.io.BufferedReader.readLine(BufferedReader.java:392)
+	at dslab.util.wrapper.ReaderWrapper.readLineFromBufferedReader(ReaderWrapper.java:9)
+	at dslab.mailbox.DMAPReaderThread.run(DMAPReaderThread.java:102)
+
+Nov. 07, 2022 3:17:50 NACHM. dslab.mailbox.ListenerThread run
+SCHWERWIEGEND: SocketException while handling socket
+java.net.SocketException: Interrupted function call: accept failed
+	at java.base/java.net.PlainSocketImpl.accept0(Native Method)
+	at java.base/java.net.PlainSocketImpl.socketAccept(PlainSocketImpl.java:159)
+	at java.base/java.net.AbstractPlainSocketImpl.accept(AbstractPlainSocketImpl.java:458)
+	at java.base/java.net.ServerSocket.implAccept(ServerSocket.java:565)
+	at java.base/java.net.ServerSocket.accept(ServerSocket.java:533)
+	at dslab.mailbox.ListenerThread.run(ListenerThread.java:47)
+
+Nov. 07, 2022 3:17:50 NACHM. dslab.mailbox.ListenerThread run
+SCHWERWIEGEND: SocketException while handling socket
+java.net.SocketException: Interrupted function call: accept failed
+	at java.base/java.net.PlainSocketImpl.accept0(Native Method)
+	at java.base/java.net.PlainSocketImpl.socketAccept(PlainSocketImpl.java:159)
+	at java.base/java.net.AbstractPlainSocketImpl.accept(AbstractPlainSocketImpl.java:458)
+	at java.base/java.net.ServerSocket.implAccept(ServerSocket.java:565)
+	at java.base/java.net.ServerSocket.accept(ServerSocket.java:533)
+	at dslab.mailbox.ListenerThread.run(ListenerThread.java:47)
+
+Nov. 07, 2022 3:17:53 NACHM. dslab.monitoring.MonitoringServerTest runAndShutdownTransferServer_createsAndStopsTcpSocketCorrectly
+INFORMATION: Waiting for thread to stop for component dslab.mailbox.MailboxServer@7c44300e
+</pre>
+</span>
+</div>
+</div>
+<div id="footer">
+<p>
+<div>
+<label class="hidden" id="label-for-line-wrapping-toggle" for="line-wrapping-toggle">Wrap lines
+<input id="line-wrapping-toggle" type="checkbox" autocomplete="off"/>
+</label>
+</div>Generated by 
+<a href="http://www.gradle.org">Gradle 6.6.1</a> at 07.11.2022, 15:18:30</p>
+</div>
+</div>
+</body>
+</html>

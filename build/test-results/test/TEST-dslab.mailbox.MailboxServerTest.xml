@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="dslab.mailbox.MailboxServerTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2022-11-07T14:17:50" hostname="SIMON-DESKTOP" time="3.028">
+  <properties/>
+  <testcase name="runAndShutdownTransferServer_createsAndStopsTcpSocketCorrectly" classname="dslab.mailbox.MailboxServerTest" time="3.028"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[Nov. 07, 2022 3:17:50 NACHM. dslab.monitoring.MonitoringServerTest runAndShutdownTransferServer_createsAndStopsTcpSocketCorrectly
+INFORMATION: Starting thread with component dslab.mailbox.MailboxServer@7c44300e
+Nov. 07, 2022 3:17:50 NACHM. dslab.monitoring.MonitoringServerTest runAndShutdownTransferServer_createsAndStopsTcpSocketCorrectly
+INFORMATION: Waiting for DMTP socket to open on port 10732
+Nov. 07, 2022 3:17:50 NACHM. dslab.monitoring.MonitoringServerTest runAndShutdownTransferServer_createsAndStopsTcpSocketCorrectly
+INFORMATION: Waiting for DMAP socket to open on port 10733
+Nov. 07, 2022 3:17:50 NACHM. dslab.monitoring.MonitoringServerTest runAndShutdownTransferServer_createsAndStopsTcpSocketCorrectly
+INFORMATION: Shutting down component dslab.mailbox.MailboxServer@7c44300e
+Nov. 07, 2022 3:17:50 NACHM. dslab.mailbox.DMTPReaderThread run
+SCHWERWIEGEND: SocketException while handling socket
+java.net.SocketException: Software caused connection abort: recv failed
+	at java.base/java.net.SocketInputStream.socketRead0(Native Method)
+	at java.base/java.net.SocketInputStream.socketRead(SocketInputStream.java:115)
+	at java.base/java.net.SocketInputStream.read(SocketInputStream.java:168)
+	at java.base/java.net.SocketInputStream.read(SocketInputStream.java:140)
+	at java.base/sun.nio.cs.StreamDecoder.readBytes(StreamDecoder.java:284)
+	at java.base/sun.nio.cs.StreamDecoder.implRead(StreamDecoder.java:326)
+	at java.base/sun.nio.cs.StreamDecoder.read(StreamDecoder.java:178)
+	at java.base/java.io.InputStreamReader.read(InputStreamReader.java:185)
+	at java.base/java.io.BufferedReader.fill(BufferedReader.java:161)
+	at java.base/java.io.BufferedReader.readLine(BufferedReader.java:326)
+	at java.base/java.io.BufferedReader.readLine(BufferedReader.java:392)
+	at dslab.util.wrapper.ReaderWrapper.readLineFromBufferedReader(ReaderWrapper.java:9)
+	at dslab.mailbox.DMTPReaderThread.run(DMTPReaderThread.java:77)
+
+Nov. 07, 2022 3:17:50 NACHM. dslab.mailbox.DMAPReaderThread run
+SCHWERWIEGEND: SocketException while handling socket
+java.net.SocketException: Software caused connection abort: recv failed
+	at java.base/java.net.SocketInputStream.socketRead0(Native Method)
+	at java.base/java.net.SocketInputStream.socketRead(SocketInputStream.java:115)
+	at java.base/java.net.SocketInputStream.read(SocketInputStream.java:168)
+	at java.base/java.net.SocketInputStream.read(SocketInputStream.java:140)
+	at java.base/sun.nio.cs.StreamDecoder.readBytes(StreamDecoder.java:284)
+	at java.base/sun.nio.cs.StreamDecoder.implRead(StreamDecoder.java:326)
+	at java.base/sun.nio.cs.StreamDecoder.read(StreamDecoder.java:178)
+	at java.base/java.io.InputStreamReader.read(InputStreamReader.java:185)
+	at java.base/java.io.BufferedReader.fill(BufferedReader.java:161)
+	at java.base/java.io.BufferedReader.readLine(BufferedReader.java:326)
+	at java.base/java.io.BufferedReader.readLine(BufferedReader.java:392)
+	at dslab.util.wrapper.ReaderWrapper.readLineFromBufferedReader(ReaderWrapper.java:9)
+	at dslab.mailbox.DMAPReaderThread.run(DMAPReaderThread.java:102)
+
+Nov. 07, 2022 3:17:50 NACHM. dslab.mailbox.ListenerThread run
+SCHWERWIEGEND: SocketException while handling socket
+java.net.SocketException: Interrupted function call: accept failed
+	at java.base/java.net.PlainSocketImpl.accept0(Native Method)
+	at java.base/java.net.PlainSocketImpl.socketAccept(PlainSocketImpl.java:159)
+	at java.base/java.net.AbstractPlainSocketImpl.accept(AbstractPlainSocketImpl.java:458)
+	at java.base/java.net.ServerSocket.implAccept(ServerSocket.java:565)
+	at java.base/java.net.ServerSocket.accept(ServerSocket.java:533)
+	at dslab.mailbox.ListenerThread.run(ListenerThread.java:47)
+
+Nov. 07, 2022 3:17:50 NACHM. dslab.mailbox.ListenerThread run
+SCHWERWIEGEND: SocketException while handling socket
+java.net.SocketException: Interrupted function call: accept failed
+	at java.base/java.net.PlainSocketImpl.accept0(Native Method)
+	at java.base/java.net.PlainSocketImpl.socketAccept(PlainSocketImpl.java:159)
+	at java.base/java.net.AbstractPlainSocketImpl.accept(AbstractPlainSocketImpl.java:458)
+	at java.base/java.net.ServerSocket.implAccept(ServerSocket.java:565)
+	at java.base/java.net.ServerSocket.accept(ServerSocket.java:533)
+	at dslab.mailbox.ListenerThread.run(ListenerThread.java:47)
+
+Nov. 07, 2022 3:17:53 NACHM. dslab.monitoring.MonitoringServerTest runAndShutdownTransferServer_createsAndStopsTcpSocketCorrectly
+INFORMATION: Waiting for thread to stop for component dslab.mailbox.MailboxServer@7c44300e
+]]></system-err>
+</testsuite>

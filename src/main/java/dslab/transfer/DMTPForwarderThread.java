@@ -16,6 +16,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.UncheckedIOException;
 import java.lang.invoke.MethodHandles;
+import java.net.ConnectException;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.SocketException;
@@ -104,6 +105,8 @@ public final class DMTPForwarderThread extends Thread
                     }
                 }
             }
+        } catch (ConnectException e) {
+            LOG.error("Server not reachable", e);
         } catch (UnknownHostException e) {
             LOG.error("Cannot connect to host", e);
         } catch (SocketException e) {

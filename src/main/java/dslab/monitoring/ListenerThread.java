@@ -2,7 +2,7 @@ package dslab.monitoring;
 
 import dslab.monitoring.storage.Storage;
 import dslab.util.CloseableResource;
-import dslab.util.PacketDataParser;
+import dslab.util.parser.PacketDataParser;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 

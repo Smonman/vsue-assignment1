@@ -4,6 +4,7 @@ import at.ac.tuwien.dsg.orvell.Shell;
 import at.ac.tuwien.dsg.orvell.StopShellException;
 import at.ac.tuwien.dsg.orvell.annotation.Command;
 import dslab.ComponentFactory;
+import dslab.ReaderThreadFactory;
 import dslab.mailbox.lookup.UserLookup;
 import dslab.mailbox.storage.Storage;
 import dslab.mailbox.storage.impl.InMemoryStorage;
@@ -62,11 +63,20 @@ public final class MailboxServer implements IMailboxServer {
         try {
             dmtpServerSocket = new ServerSocket(dmtpPort);
             dmapServerSocket = new ServerSocket(dmapPort);
-
-            new ListenerThread(dmtpServerSocket, "dmtp", config, userLookup,
-                storage).start();
-            new ListenerThread(dmapServerSocket, "dmap", config, userLookup,
-                storage).start();
+            new ListenerThread(
+                dmtpServerSocket,
+                ReaderThreadFactory.readerThreadType.DMTP,
+                config,
+                userLookup,
+                storage
+            ).start();
+            new ListenerThread(
+                dmapServerSocket,
+                ReaderThreadFactory.readerThreadType.DMAP,
+                config,
+                userLookup,
+                storage
+            ).start();
         } catch (IOException e) {
             throw new UncheckedIOException(
                 "An error occurred while creating the server socket.", e);

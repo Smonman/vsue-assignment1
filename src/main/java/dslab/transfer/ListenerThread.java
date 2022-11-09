@@ -18,7 +18,6 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 /**
  * An extension of {@code Thread}.
@@ -31,7 +30,7 @@ import java.util.concurrent.Future;
 public final class ListenerThread extends Thread implements CloseableResource {
 
     private static final Log LOG =
-            LogFactory.getLog(MethodHandles.lookup().lookupClass());
+        LogFactory.getLog(MethodHandles.lookup().lookupClass());
     private static final int POOL_SIZE = 8;
     private final ServerSocket serverSocket;
     private final BlockingQueue<DMTPMessage> messageQueue;
@@ -45,7 +44,7 @@ public final class ListenerThread extends Thread implements CloseableResource {
                           final Config config) {
         this.serverSocket = serverSocket;
         this.config = config;
-        this.messageQueue = new ArrayBlockingQueue<>(16);
+        this.messageQueue = new ArrayBlockingQueue<>(POOL_SIZE * 2);
         this.domainLookup = new DomainLookup();
         this.producerPool = Executors.newFixedThreadPool(POOL_SIZE);
         this.consumerPool = Executors.newFixedThreadPool(POOL_SIZE);
@@ -59,8 +58,8 @@ public final class ListenerThread extends Thread implements CloseableResource {
         while (!Thread.currentThread().isInterrupted()) {
             try {
                 socket = serverSocket.accept();
-                producerPool.execute(
-                        new DMTPReaderThread(socket, messageQueue, socketManager));
+                producerPool.execute(new DMTPReaderThread(
+                    socket, messageQueue, socketManager));
             } catch (SocketException e) {
                 LOG.error("SocketException while handling socket", e);
                 break;
@@ -76,8 +75,8 @@ public final class ListenerThread extends Thread implements CloseableResource {
 
     private void startConsumer() {
         for (int i = 0; i < POOL_SIZE; i++) {
-            consumerPool.submit(
-                    new DMTPForwarderThread(config, domainLookup, messageQueue));
+            consumerPool.execute(new DMTPForwarderThread(
+                config, domainLookup, messageQueue));
         }
     }
 

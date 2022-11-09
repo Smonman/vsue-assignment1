@@ -3,6 +3,7 @@ package dslab.mailbox;
 import dslab.ReaderThreadFactory;
 import dslab.mailbox.lookup.UserLookup;
 import dslab.mailbox.storage.Storage;
+import dslab.transfer.socket.SocketManager;
 import dslab.util.CloseableResource;
 import dslab.util.Config;
 import dslab.util.wrapper.PrintWrapper;
@@ -15,21 +16,26 @@ import java.lang.invoke.MethodHandles;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public final class ListenerThread extends Thread
     implements PrintWrapper, CloseableResource {
 
     private static final Log LOG =
         LogFactory.getLog(MethodHandles.lookup().lookupClass());
+    private static final int POOL_SIZE = 16;
     private final ServerSocket serverSocket;
-    private final String readerThreadType;
+    private final ReaderThreadFactory.readerThreadType readerThreadType;
     private final Config config;
     private final UserLookup userLookup;
     private final Storage storage;
+    private final ExecutorService pool;
+    private final SocketManager socketManager;
     private Socket socket;
 
     public ListenerThread(final ServerSocket serverSocket,
-                          final String readerThreadType,
+                          final ReaderThreadFactory.readerThreadType readerThreadType,
                           final Config config,
                           final UserLookup userLookup,
                           final Storage storage) {
@@ -38,6 +44,8 @@ public final class ListenerThread extends Thread
         this.config = config;
         this.userLookup = userLookup;
         this.storage = storage;
+        this.pool = Executors.newFixedThreadPool(POOL_SIZE);
+        this.socketManager = new SocketManager();
     }
 
     @Override
@@ -45,8 +53,10 @@ public final class ListenerThread extends Thread
         while (!Thread.currentThread().isInterrupted()) {
             try {
                 socket = serverSocket.accept();
-                ReaderThreadFactory.createReaderThread(readerThreadType, socket,
-                    config, userLookup, storage).start();
+                pool.execute(
+                    ReaderThreadFactory.createReaderThread(readerThreadType,
+                        socket,
+                        config, userLookup, storage, socketManager));
             } catch (SocketException e) {
                 LOG.error("SocketException while handling socket", e);
                 break;
@@ -61,6 +71,8 @@ public final class ListenerThread extends Thread
     }
 
     private void shutdown() {
+        closeCloseable(socketManager);
+        shutdownAndAwaitTermination(pool);
         closeCloseable(socket);
     }
 }

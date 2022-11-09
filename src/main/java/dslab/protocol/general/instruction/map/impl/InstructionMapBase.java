@@ -42,7 +42,7 @@ public abstract class InstructionMapBase implements InstructionMap {
     public int size() {
         return instructionMap.size();
     }
-    
+
     @Override
     public boolean isEmpty() {
         return instructionMap.isEmpty();

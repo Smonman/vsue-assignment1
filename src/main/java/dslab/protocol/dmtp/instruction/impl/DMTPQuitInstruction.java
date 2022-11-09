@@ -14,7 +14,7 @@ import java.util.List;
  * @see InstructionBase
  */
 public final class DMTPQuitInstruction extends InstructionBase
-        implements ExtendableOkResponse, ExtendableErrorResponse {
+    implements ExtendableOkResponse, ExtendableErrorResponse {
 
     private boolean receivedQuit;
 

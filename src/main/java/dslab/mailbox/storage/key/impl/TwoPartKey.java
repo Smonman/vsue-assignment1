@@ -1,7 +1,7 @@
 package dslab.mailbox.storage.key.impl;
 
 import dslab.protocol.dmtp.message.DMTPMessage;
-import dslab.util.AddressParser;
+import dslab.util.parser.AddressParser;
 
 import java.util.Objects;
 

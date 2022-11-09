@@ -1,4 +1,4 @@
-package dslab.util;
+package dslab.util.parser;
 
 /**
  * This is a static utility class.

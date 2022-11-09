@@ -13,7 +13,7 @@ import java.util.List;
  * @see InstructionBase
  */
 public final class DMTPDataInstruction extends InstructionBase
-        implements ExtendableErrorResponse {
+    implements ExtendableErrorResponse {
 
     private String data;
 

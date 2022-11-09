@@ -2,9 +2,9 @@ package dslab.transfer;
 
 import dslab.protocol.dmtp.message.DMTPMessage;
 import dslab.transfer.lookup.DomainLookup;
-import dslab.util.AddressParser;
 import dslab.util.CloseableResource;
 import dslab.util.Config;
+import dslab.util.parser.AddressParser;
 import dslab.util.wrapper.PrintWrapper;
 import dslab.util.wrapper.ReaderWrapper;
 import org.apache.commons.logging.Log;
@@ -24,7 +24,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 
-public class DMTPForwarderThread extends Thread
+public final class DMTPForwarderThread extends Thread
     implements PrintWrapper, ReaderWrapper, CloseableResource {
 
     private static final Log LOG =

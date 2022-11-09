@@ -14,7 +14,7 @@ import java.util.List;
  * @see InstructionBase
  */
 public final class DMTPSendInstruction extends InstructionBase
-        implements ExtendableErrorResponse, SpecialErrorResponse {
+    implements ExtendableErrorResponse, SpecialErrorResponse {
 
     private boolean receivedSend;
 

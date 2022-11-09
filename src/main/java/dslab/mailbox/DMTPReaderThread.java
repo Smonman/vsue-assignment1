@@ -5,15 +5,12 @@ import dslab.mailbox.storage.Storage;
 import dslab.protocol.dmap.instruction.Hook;
 import dslab.protocol.dmtp.instruction.map.DMTPInstructionMap;
 import dslab.protocol.dmtp.parser.DMTPParser;
-import dslab.protocol.general.ExtendableErrorResponse;
-import dslab.protocol.general.ExtendableOkResponse;
 import dslab.protocol.general.exception.InstructionNotFoundException;
 import dslab.protocol.general.exception.InvalidInstructionException;
-import dslab.util.AddressParser;
-import dslab.util.CloseableResource;
+import dslab.transfer.socket.SocketManager;
 import dslab.util.Config;
-import dslab.util.wrapper.PrintWrapper;
-import dslab.util.wrapper.ReaderWrapper;
+import dslab.util.parser.AddressParser;
+import dslab.util.thread.ManagedThread;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -26,9 +23,7 @@ import java.lang.invoke.MethodHandles;
 import java.net.Socket;
 import java.net.SocketException;
 
-public class DMTPReaderThread extends Thread
-    implements PrintWrapper, ReaderWrapper, CloseableResource,
-    ExtendableOkResponse, ExtendableErrorResponse {
+public final class DMTPReaderThread extends ManagedThread {
 
     private static final Log LOG =
         LogFactory.getLog(MethodHandles.lookup().lookupClass());
@@ -42,7 +37,9 @@ public class DMTPReaderThread extends Thread
     public DMTPReaderThread(final Socket socket,
                             final Config config,
                             final UserLookup userLookup,
-                            final Storage storage) {
+                            final Storage storage,
+                            final SocketManager socketManager) {
+        super(socket, socketManager);
         this.socket = socket;
         this.storage = storage;
         this.domain = config.getString("domain");
@@ -65,7 +62,7 @@ public class DMTPReaderThread extends Thread
     }
 
     @Override
-    public void run() {
+    public void runHook() {
         BufferedReader reader = null;
         PrintWriter writer = null;
         try {

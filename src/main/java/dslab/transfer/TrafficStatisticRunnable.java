@@ -11,7 +11,8 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 
-public class TrafficStatisticRunnable implements Runnable, CloseableResource {
+public final class TrafficStatisticRunnable
+    implements Runnable, CloseableResource {
 
     private final String host;
     private final int port;

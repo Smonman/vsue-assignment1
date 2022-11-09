@@ -35,10 +35,6 @@ public final class ComponentFactory {
                                                            InputStream in,
                                                            PrintStream out)
         throws Exception {
-        /*
-         * TODO: Here you can modify the code (if necessary) to instantiate your components
-         */
-
         Config config = new Config(componentId);
         return new MonitoringServer(componentId, config, in, out);
     }
@@ -55,10 +51,6 @@ public final class ComponentFactory {
                                                      InputStream in,
                                                      PrintStream out)
         throws Exception {
-        /*
-         * TODO: Here you can modify the code (if necessary) to instantiate your components
-         */
-
         Config config = new Config(componentId);
         return new MailboxServer(componentId, config, in, out);
     }
@@ -75,10 +67,6 @@ public final class ComponentFactory {
                                                        InputStream in,
                                                        PrintStream out)
         throws Exception {
-        /*
-         * TODO: Here you can modify the code (if necessary) to instantiate your components
-         */
-
         Config config = new Config(componentId);
         return new TransferServer(componentId, config, in, out);
     }

@@ -63,7 +63,7 @@ public final class DMTPReaderThread extends ManagedThread {
             writer = new PrintWriter(socket.getOutputStream());
             printlnToPrintWriter(writer, okResponse());
             String instruction;
-            while ((instruction = reader.readLine()) != null) {
+            while ((instruction = readLineFromBufferedReader(reader)) != null) {
                 try {
                     dmtpParser.parseInstruction(instruction);
                 } catch (InstructionNotFoundException e) {

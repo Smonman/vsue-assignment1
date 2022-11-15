@@ -55,8 +55,7 @@ public final class ListenerThread extends Thread
                 socket = serverSocket.accept();
                 pool.execute(
                     ReaderThreadFactory.createReaderThread(readerThreadType,
-                        socket,
-                        config, userLookup, storage, socketManager));
+                        socket, config, userLookup, storage, socketManager));
             } catch (SocketException e) {
                 LOG.error("SocketException while handling socket", e);
                 break;

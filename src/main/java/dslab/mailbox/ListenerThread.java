@@ -6,7 +6,6 @@ import dslab.mailbox.storage.Storage;
 import dslab.transfer.socket.SocketManager;
 import dslab.util.CloseableResource;
 import dslab.util.Config;
-import dslab.util.wrapper.PrintWrapper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -20,7 +19,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public final class ListenerThread extends Thread
-    implements PrintWrapper, CloseableResource {
+    implements CloseableResource {
 
     private static final Log LOG =
         LogFactory.getLog(MethodHandles.lookup().lookupClass());

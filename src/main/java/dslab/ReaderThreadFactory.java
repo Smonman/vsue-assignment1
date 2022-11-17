@@ -4,8 +4,8 @@ import dslab.mailbox.DMAPReaderThread;
 import dslab.mailbox.DMTPReaderThread;
 import dslab.mailbox.lookup.UserLookup;
 import dslab.mailbox.storage.Storage;
-import dslab.transfer.socket.SocketManager;
 import dslab.util.Config;
+import dslab.util.socketmanager.SocketManager;
 
 import java.net.Socket;
 
@@ -44,19 +44,19 @@ public final class ReaderThreadFactory {
         switch (type) {
             case DMTP:
                 return new DMTPReaderThread(
-                    socket,
-                    config,
-                    userLookup,
-                    storage,
-                    socketManager
+                        socket,
+                        config,
+                        userLookup,
+                        storage,
+                        socketManager
                 );
             case DMAP:
             default:
                 return new DMAPReaderThread(
-                    socket,
-                    userLookup,
-                    storage,
-                    socketManager
+                        socket,
+                        userLookup,
+                        storage,
+                        socketManager
                 );
         }
     }

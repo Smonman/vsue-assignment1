@@ -7,18 +7,14 @@ import dslab.protocol.dmtp.instruction.map.DMTPInstructionMap;
 import dslab.protocol.dmtp.parser.DMTPParser;
 import dslab.protocol.general.exception.InstructionNotFoundException;
 import dslab.protocol.general.exception.InvalidInstructionException;
-import dslab.transfer.socket.SocketManager;
 import dslab.util.Config;
 import dslab.util.parser.AddressParser;
+import dslab.util.socketmanager.SocketManager;
 import dslab.util.thread.ManagedThread;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.io.UncheckedIOException;
+import java.io.*;
 import java.lang.invoke.MethodHandles;
 import java.net.Socket;
 import java.net.SocketException;
@@ -26,7 +22,7 @@ import java.net.SocketException;
 public final class DMTPReaderThread extends ManagedThread {
 
     private static final Log LOG =
-        LogFactory.getLog(MethodHandles.lookup().lookupClass());
+            LogFactory.getLog(MethodHandles.lookup().lookupClass());
     private final Socket socket;
     private final Storage storage;
     private final String domain;
@@ -44,11 +40,11 @@ public final class DMTPReaderThread extends ManagedThread {
         this.storage = storage;
         this.domain = config.getString("domain");
         this.acceptHook =
-            s -> AddressParser.getDomain(s).equals(domain);
+                s -> AddressParser.getDomain(s).equals(domain);
         this.isKnownHook =
-            s -> userLookup.containsKey(AddressParser.getUsername(s));
+                s -> userLookup.containsKey(AddressParser.getUsername(s));
         this.dmtpParser =
-            new DMTPParser(new DMTPInstructionMap(acceptHook, isKnownHook));
+                new DMTPParser(new DMTPInstructionMap(acceptHook, isKnownHook));
     }
 
     @Override
@@ -67,7 +63,7 @@ public final class DMTPReaderThread extends ManagedThread {
         PrintWriter writer = null;
         try {
             reader = new BufferedReader(
-                new InputStreamReader(socket.getInputStream()));
+                    new InputStreamReader(socket.getInputStream()));
             writer = new PrintWriter(socket.getOutputStream());
             printlnToPrintWriter(writer, okResponse());
             String instruction;
@@ -86,7 +82,7 @@ public final class DMTPReaderThread extends ManagedThread {
                 if (dmtpParser.isSet("send") && dmtpParser.isComplete()) {
                     saveMessage();
                     dmtpParser = new DMTPParser(
-                        new DMTPInstructionMap(acceptHook, isKnownHook));
+                            new DMTPInstructionMap(acceptHook, isKnownHook));
                 }
             }
         } catch (SocketException e) {

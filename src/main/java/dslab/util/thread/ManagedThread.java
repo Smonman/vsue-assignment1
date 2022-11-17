@@ -2,8 +2,8 @@ package dslab.util.thread;
 
 import dslab.protocol.general.ExtendableErrorResponse;
 import dslab.protocol.general.ExtendableOkResponse;
-import dslab.transfer.socket.SocketManager;
 import dslab.util.CloseableResource;
+import dslab.util.socketmanager.SocketManager;
 import dslab.util.wrapper.PrintWrapper;
 import dslab.util.wrapper.ReaderWrapper;
 
@@ -16,8 +16,8 @@ import java.net.Socket;
  * @see SocketManager
  */
 public abstract class ManagedThread extends Thread implements PrintWrapper,
-    ReaderWrapper, CloseableResource,
-    ExtendableOkResponse, ExtendableErrorResponse {
+        ReaderWrapper, CloseableResource,
+        ExtendableOkResponse, ExtendableErrorResponse {
 
     private final SocketManager socketManager;
     private final int index;

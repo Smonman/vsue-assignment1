@@ -8,17 +8,13 @@ import dslab.protocol.dmap.instruction.map.DMAPInstructionMap;
 import dslab.protocol.dmap.parser.DMAPParser;
 import dslab.protocol.general.exception.InstructionNotFoundException;
 import dslab.protocol.general.exception.InvalidInstructionException;
-import dslab.transfer.socket.SocketManager;
 import dslab.util.parser.LoginParser;
+import dslab.util.socketmanager.SocketManager;
 import dslab.util.thread.ManagedThread;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.io.UncheckedIOException;
+import java.io.*;
 import java.lang.invoke.MethodHandles;
 import java.net.Socket;
 import java.net.SocketException;
@@ -26,7 +22,7 @@ import java.util.stream.Collectors;
 
 public final class DMAPReaderThread extends ManagedThread {
     private static final Log LOG =
-        LogFactory.getLog(MethodHandles.lookup().lookupClass());
+            LogFactory.getLog(MethodHandles.lookup().lookupClass());
     private final Socket socket;
     private final DMAPParser dmapParser;
     private final Hook<Void, String> deleteHook;
@@ -48,13 +44,13 @@ public final class DMAPReaderThread extends ManagedThread {
             return null;
         };
         this.showHook = s ->
-            storage.get(TwoPartKey.of(Integer.parseInt(s), loggedInUser))
-                .getMessage().toDMAPString();
+                storage.get(TwoPartKey.of(Integer.parseInt(s), loggedInUser))
+                        .getMessage().toDMAPString();
         this.loginHook = s -> {
             String username = LoginParser.getUsername(s);
             String password = LoginParser.getPassword(s);
             if (userLookup.containsKey(username) &&
-                userLookup.get(username).equals(password)) {
+                    userLookup.get(username).equals(password)) {
                 loggedInUser = username;
                 return true;
             } else {
@@ -63,16 +59,16 @@ public final class DMAPReaderThread extends ManagedThread {
             }
         };
         this.listHook = s ->
-            storage.getAll(loggedInUser)
-                .stream()
-                .map(p -> String.format("%7d: %s", p.getId(),
-                    p.getMessage().toPreviewString()))
-                .collect(Collectors.joining("\r\n"));
+                storage.getAll(loggedInUser)
+                        .stream()
+                        .map(p -> String.format("%7d: %s", p.getId(),
+                                p.getMessage().toPreviewString()))
+                        .collect(Collectors.joining("\r\n"));
         this.existsHook = s -> storage.contains(
-            TwoPartKey.of(Integer.parseInt(s), loggedInUser));
+                TwoPartKey.of(Integer.parseInt(s), loggedInUser));
         this.dmapParser = new DMAPParser(
-            new DMAPInstructionMap(deleteHook, listHook, loginHook, showHook,
-                existsHook));
+                new DMAPInstructionMap(deleteHook, listHook, loginHook, showHook,
+                        existsHook));
     }
 
     @Override
@@ -91,7 +87,7 @@ public final class DMAPReaderThread extends ManagedThread {
         PrintWriter writer = null;
         try {
             reader = new BufferedReader(
-                new InputStreamReader(socket.getInputStream()));
+                    new InputStreamReader(socket.getInputStream()));
             writer = new PrintWriter(socket.getOutputStream());
             printlnToPrintWriter(writer, okResponse());
             String instruction;
@@ -114,8 +110,8 @@ public final class DMAPReaderThread extends ManagedThread {
             throw new UncheckedIOException(e);
         } catch (InvalidInstructionException e) {
             LOG.error(
-                String.format("Error invalid instruction: %s", e.getMessage()),
-                e);
+                    String.format("Error invalid instruction: %s", e.getMessage()),
+                    e);
         } catch (RuntimeException e) {
             LOG.error("An error occurred", e);
         } finally {

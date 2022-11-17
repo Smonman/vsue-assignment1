@@ -3,9 +3,9 @@ package dslab.mailbox;
 import dslab.ReaderThreadFactory;
 import dslab.mailbox.lookup.UserLookup;
 import dslab.mailbox.storage.Storage;
-import dslab.transfer.socket.SocketManager;
 import dslab.util.CloseableResource;
 import dslab.util.Config;
+import dslab.util.socketmanager.SocketManager;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -19,10 +19,10 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public final class ListenerThread extends Thread
-    implements CloseableResource {
+        implements CloseableResource {
 
     private static final Log LOG =
-        LogFactory.getLog(MethodHandles.lookup().lookupClass());
+            LogFactory.getLog(MethodHandles.lookup().lookupClass());
     private static final int POOL_SIZE = 16;
     private final ServerSocket serverSocket;
     private final ReaderThreadFactory.readerThreadType readerThreadType;
@@ -53,8 +53,8 @@ public final class ListenerThread extends Thread
             try {
                 socket = serverSocket.accept();
                 pool.execute(
-                    ReaderThreadFactory.createReaderThread(readerThreadType,
-                        socket, config, userLookup, storage, socketManager));
+                        ReaderThreadFactory.createReaderThread(readerThreadType,
+                                socket, config, userLookup, storage, socketManager));
             } catch (SocketException e) {
                 LOG.error("SocketException while handling socket", e);
                 break;

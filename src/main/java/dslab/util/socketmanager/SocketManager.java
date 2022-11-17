@@ -1,4 +1,4 @@
-package dslab.transfer.socket;
+package dslab.util.socketmanager;
 
 import java.io.Closeable;
 import java.io.IOException;

@@ -57,15 +57,13 @@ public final class DMTPForwarderThread extends Thread
                     serverWriter =
                             new PrintWriter(socket.getOutputStream());
                     String response = readLineFromBufferedReader(serverReader);
-                    List<String> instructions = getReplayInstructions(message);
                     if (!response.equals("ok DMTP")) {
                         LOG.error(
                                 String.format("Unexpected protocol: %s\n",
                                         response));
                     } else {
                         boolean errorOccurred = false;
-                        for (int index = 0; index < instructions.size() - 1; index++) {
-                            String instruction = instructions.get(index);
+                        for (String instruction : getReplayInstructions(message)) {
                             LOG.debug(
                                     String.format("Sending instruction %s",
                                             instruction));
@@ -122,7 +120,10 @@ public final class DMTPForwarderThread extends Thread
 
     private void sendErrorMessage(final DMTPMessage message)
             throws UnknownHostException, InterruptedException {
-        messageQueue.put(createErrorMessage(message));
+        DirectedDMTPMesssage directedMessage = createErrorMessage(message);
+        if (directedMessage != null) {
+            messageQueue.put(directedMessage);
+        }
     }
 
     private DirectedDMTPMesssage createErrorMessage(final DMTPMessage originalMessage)
@@ -130,7 +131,8 @@ public final class DMTPForwarderThread extends Thread
         String newFrom = String.format("mailer@[%s]",
                 InetAddress.getLocalHost().getHostAddress());
         if (originalMessage.getFrom().equals(newFrom)) {
-            throw new RuntimeException("Abort error message sending");
+            LOG.info("Aborting sending error messages");
+            return null;
         }
         DMTPMessage newMessage = new DMTPMessage(
                 newFrom,

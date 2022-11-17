@@ -63,6 +63,7 @@ public class SocketManager implements Closeable {
      */
     @Override
     public void close() throws IOException {
+        // as loop instead of stream beause of the IOException
         for (Closeable c : silo.values()) {
             c.close();
         }

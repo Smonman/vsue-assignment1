@@ -5,7 +5,7 @@ import dslab.protocol.general.instruction.Instruction;
 import dslab.protocol.general.instruction.map.InstructionMap;
 import dslab.protocol.general.parser.impl.ParserBase;
 
-import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,27 +23,59 @@ public final class DMTPParser extends ParserBase {
     }
 
     /**
+     * Gets the message.
+     *
+     * @return a new message.
+     */
+    public DMTPMessage getMessage() {
+        return new DMTPMessage(
+                getInstructionMap().get("from").getValue(),
+                getRecipientsAsList(),
+                getInstructionMap().get("subject").getValue(),
+                getInstructionMap().get("data").getValue()
+        );
+    }
+
+    /**
      * Gets all messages.
      *
      * <p>This method returns all possible messages from the cross product of
      * the given recipients and the other parts of the message. Each message
-     * will therefore only have one recipient.
+     * will have a different primary recipient, which will be the first
+     * element of the recipients list.
      *
      * @apiNote this must be complete before a call to this.
      * @see DMTPParser#isComplete()
      */
     public List<DMTPMessage> getMessages() {
-        return Arrays.stream(getInstructionMap()
+        List<String> recipients = getRecipientsAsList();
+        List<DMTPMessage> messages = new LinkedList<>();
+        for (String recipient : recipients) {
+            messages.add(new DMTPMessage(
+                    getInstructionMap().get("from").getValue(),
+                    createRecipiantsList(recipient),
+                    getInstructionMap().get("subject").getValue(),
+                    getInstructionMap().get("data").getValue()
+            ));
+        }
+        return messages;
+    }
+
+    private List<String> getRecipientsAsList() {
+        return List.of(getInstructionMap()
                 .get("to")
                 .getValue()
-                .split(","))
-            .map(recipient -> new DMTPMessage(
-                getInstructionMap().get("from").getValue(),
-                recipient,
-                getInstructionMap().get("subject").getValue(),
-                getInstructionMap().get("data").getValue()
-            ))
-            .collect(Collectors.toList());
+                .split(","));
+    }
+
+    private List<String> createRecipiantsList(final String primaryRecipient) {
+        List<String> temp = new LinkedList<>();
+        temp.add(primaryRecipient);
+        temp.addAll(getRecipientsAsList()
+                .stream()
+                .filter(r -> !r.equals(primaryRecipient))
+                .collect(Collectors.toList()));
+        return temp;
     }
 
     /**
@@ -55,9 +87,9 @@ public final class DMTPParser extends ParserBase {
      */
     public boolean isComplete() {
         return getInstructionMap()
-            .values()
-            .stream()
-            .filter(v -> !v.equals(getInstructionMap().get("quit")))
-            .allMatch(Instruction::isSet);
+                .values()
+                .stream()
+                .filter(v -> !v.equals(getInstructionMap().get("quit")))
+                .allMatch(Instruction::isSet);
     }
 }

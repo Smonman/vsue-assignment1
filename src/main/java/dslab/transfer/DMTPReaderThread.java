@@ -15,20 +15,19 @@ import java.io.*;
 import java.lang.invoke.MethodHandles;
 import java.net.Socket;
 import java.net.SocketException;
-import java.util.List;
 import java.util.concurrent.BlockingQueue;
 
 public final class DMTPReaderThread extends ManagedThread {
     private static final Log LOG =
             LogFactory.getLog(MethodHandles.lookup().lookupClass());
     private final Socket socket;
-    private final BlockingQueue<DMTPMessage> messagesQueue;
+    private final BlockingQueue<DirectedDMTPMesssage> messagesQueue;
     private final Hook<Boolean, String> acceptHook;
     private final Hook<Boolean, String> isKnownHook;
     private DMTPParser dmtpParser;
 
     public DMTPReaderThread(final Socket socket,
-                            final BlockingQueue<DMTPMessage> messageQueue,
+                            final BlockingQueue<DirectedDMTPMesssage> messageQueue,
                             final SocketManager socketManager) {
         super(socket, socketManager);
         this.socket = socket;
@@ -74,7 +73,7 @@ public final class DMTPReaderThread extends ManagedThread {
                 }
                 if (dmtpParser.isSet("send") && dmtpParser.isComplete()) {
                     LOG.debug("send is set and message is complete");
-                    addMessagesToQueue(dmtpParser.getMessages());
+                    addMessagesPerDomainToQueue(dmtpParser.getMessage());
                     dmtpParser = new DMTPParser(
                             new DMTPInstructionMap(acceptHook, isKnownHook));
                 }
@@ -96,10 +95,10 @@ public final class DMTPReaderThread extends ManagedThread {
         }
     }
 
-    private void addMessagesToQueue(final List<DMTPMessage> messages)
+    private void addMessagesPerDomainToQueue(final DMTPMessage message)
             throws InterruptedException {
-        for (DMTPMessage message : messages) {
-            messagesQueue.put(message);
+        for (String domain : message.getToDomains()) {
+            messagesQueue.put(new DirectedDMTPMesssage(message, domain));
         }
     }
 }

@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
  */
 public final class InMemoryStorage implements Storage {
 
+    // TODO use atomic int
     private final Map<String, Integer> silo;
 
     public InMemoryStorage() {
@@ -34,9 +35,9 @@ public final class InMemoryStorage implements Storage {
     @Override
     public List<String> dump() {
         return silo
-            .keySet()
-            .stream()
-            .map(k -> String.format("%s %d", k, silo.get(k)))
-            .collect(Collectors.toList());
+                .keySet()
+                .stream()
+                .map(k -> String.format("%s %d", k, silo.get(k)))
+                .collect(Collectors.toList());
     }
 }

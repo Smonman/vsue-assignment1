@@ -31,8 +31,7 @@ public final class TwoPartKey extends KeyBase {
      * @return a new {@code TwoPartKey}
      */
     public static TwoPartKey of(final int id, final DMTPMessage message) {
-        // this assumes, that the message only has one recipient
-        String username = AddressParser.getUsername(message.getTo());
+        String username = AddressParser.getUsername(message.getPrimaryTo());
         return TwoPartKey.of(id, username);
     }
 

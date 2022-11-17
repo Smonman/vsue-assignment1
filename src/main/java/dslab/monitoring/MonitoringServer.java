@@ -15,7 +15,7 @@ import java.io.PrintStream;
 import java.net.DatagramSocket;
 
 public final class MonitoringServer implements IMonitoringServer,
-    CloseableResource {
+        CloseableResource {
 
     private final Shell shell;
     private final int port;
@@ -47,8 +47,8 @@ public final class MonitoringServer implements IMonitoringServer,
 
     public static void main(String[] args) throws Exception {
         IMonitoringServer server =
-            ComponentFactory.createMonitoringServer(args[0], System.in,
-                System.out);
+                ComponentFactory.createMonitoringServer(args[0], System.in,
+                        System.out);
         server.run();
     }
 
@@ -57,7 +57,7 @@ public final class MonitoringServer implements IMonitoringServer,
         try {
             datagramSocket = new DatagramSocket(port);
             new ListenerThread(datagramSocket, addressStorage, serverStorage)
-                .start();
+                    .start();
         } catch (IOException e) {
             throw new RuntimeException("Error cannot listen on UDP port", e);
         }
@@ -76,15 +76,15 @@ public final class MonitoringServer implements IMonitoringServer,
     @Command
     public void servers() {
         serverStorage
-            .dump()
-            .forEach(e -> shell.out().println(e));
+                .dump()
+                .forEach(e -> shell.out().println(e));
     }
 
     @Override
     @Command
     public void addresses() {
         addressStorage
-            .dump()
-            .forEach(e -> shell.out().println(e));
+                .dump()
+                .forEach(e -> shell.out().println(e));
     }
 }

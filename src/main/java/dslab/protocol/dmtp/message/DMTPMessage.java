@@ -1,7 +1,11 @@
 package dslab.protocol.dmtp.message;
 
+import dslab.util.parser.AddressParser;
+
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * This represents a message for the DMTP protocol.
@@ -17,12 +21,12 @@ import java.util.List;
 public final class DMTPMessage {
 
     private final String from;
-    private final String to;
+    private final List<String> to;
     private final String subject;
     private final String data;
 
     public DMTPMessage(final String from,
-                       final String to,
+                       final List<String> to,
                        final String subject,
                        final String data) {
         this.from = from;
@@ -35,8 +39,19 @@ public final class DMTPMessage {
         return from;
     }
 
-    public String getTo() {
+    public List<String> getTo() {
         return to;
+    }
+
+    public String getPrimaryTo() {
+        return to.get(0);
+    }
+
+    public Set<String> getToDomains() {
+        return to
+                .stream()
+                .map(AddressParser::getDomain)
+                .collect(Collectors.toSet());
     }
 
     public String getSubject() {
@@ -49,19 +64,19 @@ public final class DMTPMessage {
 
     public List<String> getMessageInstructions() {
         List<String> temp = new LinkedList<>();
-        temp.add(String.format("from %s", getFrom()));
-        temp.add(String.format("to %s", getTo()));
-        temp.add(String.format("subject %s", getSubject()));
-        temp.add(String.format("data %s", getData()));
+        temp.add(String.format("from %s", from));
+        temp.add(String.format("to %s", String.join(",", to)));
+        temp.add(String.format("subject %s", subject));
+        temp.add(String.format("data %s", data));
         return temp;
     }
 
     @Override
     public String toString() {
         return "from: '" + from + "'"
-            + ", to: '" + to + "'"
-            + ", subject: '" + subject + "'"
-            + ", data: '" + data + "'";
+                + ", to: '" + to + "'"
+                + ", subject: '" + subject + "'"
+                + ", data: '" + data + "'";
     }
 
     /**
@@ -72,12 +87,12 @@ public final class DMTPMessage {
     public String toDMAPString() {
         // \r\n is needed for the putty terminal
         return String.join(" \r\n",
-            List.of(
-                String.format("%7s: %s", "from", from),
-                String.format("%7s: %s", "to", to),
-                String.format("%7s: %s", "subject", subject),
-                String.format("%7s: %s", "data", data)
-            ));
+                List.of(
+                        String.format("%7s: %s", "from", from),
+                        String.format("%7s: %s", "to", String.join(", ", to)),
+                        String.format("%7s: %s", "subject", subject),
+                        String.format("%7s: %s", "data", data)
+                ));
     }
 
     /**

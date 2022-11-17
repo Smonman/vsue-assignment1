@@ -4,6 +4,7 @@ import dslab.mailbox.lookup.UserLookup;
 import dslab.mailbox.storage.Storage;
 import dslab.protocol.dmap.instruction.Hook;
 import dslab.protocol.dmtp.instruction.map.DMTPInstructionMap;
+import dslab.protocol.dmtp.message.DMTPMessage;
 import dslab.protocol.dmtp.parser.DMTPParser;
 import dslab.protocol.general.exception.InstructionNotFoundException;
 import dslab.protocol.general.exception.InvalidInstructionException;
@@ -18,6 +19,7 @@ import java.io.*;
 import java.lang.invoke.MethodHandles;
 import java.net.Socket;
 import java.net.SocketException;
+import java.util.List;
 
 public final class DMTPReaderThread extends ManagedThread {
 
@@ -80,7 +82,7 @@ public final class DMTPReaderThread extends ManagedThread {
                     break;
                 }
                 if (dmtpParser.isSet("send") && dmtpParser.isComplete()) {
-                    saveMessage();
+                    saveMessage(dmtpParser.getMessages());
                     dmtpParser = new DMTPParser(
                             new DMTPInstructionMap(acceptHook, isKnownHook));
                 }
@@ -100,7 +102,10 @@ public final class DMTPReaderThread extends ManagedThread {
         }
     }
 
-    private void saveMessage() {
-        dmtpParser.getMessages().forEach(storage::store);
+    private void saveMessage(List<DMTPMessage> messages) {
+        messages
+                .stream()
+                .filter(m -> AddressParser.getDomain(m.getPrimaryTo()).equals(domain))
+                .forEach(storage::store);
     }
 }

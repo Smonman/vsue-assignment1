@@ -1,6 +1,5 @@
 package dslab.transfer;
 
-import dslab.protocol.dmtp.message.DMTPMessage;
 import dslab.transfer.lookup.DomainLookup;
 import dslab.util.CloseableResource;
 import dslab.util.Config;
@@ -33,7 +32,7 @@ public final class ListenerThread extends Thread implements CloseableResource {
             LogFactory.getLog(MethodHandles.lookup().lookupClass());
     private static final int POOL_SIZE = 8;
     private final ServerSocket serverSocket;
-    private final BlockingQueue<DMTPMessage> messageQueue;
+    private final BlockingQueue<DirectedDMTPMesssage> messageQueue;
     private final DomainLookup domainLookup;
     private final ExecutorService producerPool;
     private final ExecutorService consumerPool;

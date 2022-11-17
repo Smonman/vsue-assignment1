@@ -10,33 +10,25 @@ import dslab.util.wrapper.ReaderWrapper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.io.UncheckedIOException;
+import java.io.*;
 import java.lang.invoke.MethodHandles;
-import java.net.ConnectException;
-import java.net.InetAddress;
-import java.net.Socket;
-import java.net.SocketException;
-import java.net.UnknownHostException;
+import java.net.*;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 
 public final class DMTPForwarderThread extends Thread
-    implements PrintWrapper, ReaderWrapper, CloseableResource {
+        implements PrintWrapper, ReaderWrapper, CloseableResource {
 
     private static final Log LOG =
-        LogFactory.getLog(MethodHandles.lookup().lookupClass());
+            LogFactory.getLog(MethodHandles.lookup().lookupClass());
     private final DomainLookup domainLookup;
-    private final BlockingQueue<DMTPMessage> messageQueue;
+    private final BlockingQueue<DirectedDMTPMesssage> messageQueue;
     private final Config config;
 
     public DMTPForwarderThread(final Config config,
                                final DomainLookup domainLookup,
-                               final BlockingQueue<DMTPMessage> messageQueue) {
+                               final BlockingQueue<DirectedDMTPMesssage> messageQueue) {
         this.config = config;
         this.domainLookup = domainLookup;
         this.messageQueue = messageQueue;
@@ -49,56 +41,53 @@ public final class DMTPForwarderThread extends Thread
         PrintWriter serverWriter = null;
         try {
             while (!Thread.currentThread().isInterrupted()) {
-                DMTPMessage message;
-                message = messageQueue.take();
-                String to = message.getTo();
-                String domain = AddressParser.getDomain(to);
-
+                DirectedDMTPMesssage directedmessage = messageQueue.take();
+                DMTPMessage message = directedmessage.getMessage();
+                String domain = directedmessage.getDomain();
                 if (!domainLookup.containsKey(domain)) {
                     LOG.warn(String.format(
-                        "Warning domain lookup does not contain domain: %s\n",
-                        domain));
+                            "Warning domain lookup does not contain domain: %s\n",
+                            domain));
                     sendErrorMessage(message);
                 } else {
                     socket = new Socket(domainLookup.getAddress(domain),
-                        domainLookup.getPort(domain));
+                            domainLookup.getPort(domain));
                     serverReader = new BufferedReader(
-                        new InputStreamReader(socket.getInputStream()));
+                            new InputStreamReader(socket.getInputStream()));
                     serverWriter =
-                        new PrintWriter(socket.getOutputStream());
-
+                            new PrintWriter(socket.getOutputStream());
                     String response = readLineFromBufferedReader(serverReader);
                     List<String> instructions = getReplayInstructions(message);
-                    String instruction;
-                    int index = 0;
-
                     if (!response.equals("ok DMTP")) {
                         LOG.error(
-                            String.format("Unexpected protocol: %s\n",
-                                response));
+                                String.format("Unexpected protocol: %s\n",
+                                        response));
                     } else {
-                        while (index < instructions.size() - 1) {
-                            instruction = instructions.get(index);
+                        boolean errorOccurred = false;
+                        for (int index = 0; index < instructions.size() - 1; index++) {
+                            String instruction = instructions.get(index);
                             LOG.debug(
-                                String.format("Sending instruction %s",
-                                    instruction));
+                                    String.format("Sending instruction %s",
+                                            instruction));
                             printlnToPrintWriter(serverWriter, instruction);
                             response = readLineFromBufferedReader(serverReader);
                             if (response.contains("error")) {
                                 LOG.debug(
-                                    "Received an error response. Sending " +
-                                        "error message");
+                                        "Received an error response. Sending " +
+                                                "error message");
                                 sendErrorMessage(message);
+                                errorOccurred = true;
                                 break;
                             }
-                            index++;
                         }
-                        new TrafficStatisticRunnable(
-                            InetAddress.getLocalHost().getHostAddress(),
-                            config.getInt("tcp.port"),
-                            message.getFrom(),
-                            config
-                        ).run();
+                        if (!errorOccurred) {
+                            new TrafficStatisticRunnable(
+                                    InetAddress.getLocalHost().getHostAddress(),
+                                    config.getInt("tcp.port"),
+                                    message.getFrom(),
+                                    config
+                            ).run();
+                        }
                         closeCloseable(serverReader);
                         closeCloseable(serverWriter);
                         closeCloseable(socket);
@@ -132,22 +121,26 @@ public final class DMTPForwarderThread extends Thread
     }
 
     private void sendErrorMessage(final DMTPMessage message)
-        throws UnknownHostException, InterruptedException {
+            throws UnknownHostException, InterruptedException {
         messageQueue.put(createErrorMessage(message));
     }
 
-    private DMTPMessage createErrorMessage(final DMTPMessage originalMessage)
-        throws UnknownHostException {
+    private DirectedDMTPMesssage createErrorMessage(final DMTPMessage originalMessage)
+            throws UnknownHostException {
         String newFrom = String.format("mailer@[%s]",
-            InetAddress.getLocalHost().getHostAddress());
+                InetAddress.getLocalHost().getHostAddress());
         if (originalMessage.getFrom().equals(newFrom)) {
             throw new RuntimeException("Abort error message sending");
         }
-        return new DMTPMessage(
-            newFrom,
-            originalMessage.getFrom(),
-            "Error could not deliver message",
-            originalMessage.toString()
+        DMTPMessage newMessage = new DMTPMessage(
+                newFrom,
+                List.of(originalMessage.getFrom()),
+                "Error could not deliver message",
+                originalMessage.toString()
+        );
+        return new DirectedDMTPMesssage(
+                newMessage,
+                AddressParser.getDomain(originalMessage.getFrom())
         );
     }
 }

@@ -11,7 +11,6 @@ import dslab.util.parser.AddressParser;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * A concrete implementation of {@code InstructionBase}.
@@ -19,10 +18,11 @@ import java.util.stream.Stream;
  * @see InstructionBase
  */
 public final class DMTPToInstruction extends InstructionBase
-    implements ExtendableOkResponse, ExtendableErrorResponse,
-    SpecialErrorResponse {
+        implements ExtendableOkResponse, ExtendableErrorResponse,
+        SpecialErrorResponse {
 
     private List<String> to;
+    private long numAcceptedTo;
     private Hook<Boolean, String> acceptHook;
     private Hook<Boolean, String> isKnownHook;
 
@@ -38,18 +38,18 @@ public final class DMTPToInstruction extends InstructionBase
     }
 
     public void setAcceptHook(
-        final Hook<Boolean, String> acceptHook) {
+            final Hook<Boolean, String> acceptHook) {
         this.acceptHook = acceptHook;
     }
 
     public void setIsKnownHook(
-        final Hook<Boolean, String> isKnownHook) {
+            final Hook<Boolean, String> isKnownHook) {
         this.isKnownHook = isKnownHook;
     }
 
     @Override
     public String okResponseExtension() {
-        return Integer.toString(to.size());
+        return Long.toString(numAcceptedTo);
     }
 
     @Override
@@ -60,21 +60,23 @@ public final class DMTPToInstruction extends InstructionBase
     @Override
     public String handleInstructionHook(final String argument) {
         String[] parts = argument.trim().split(",");
-        to = Stream.of(parts)
-            .filter(p -> acceptHook.hook(p))
-            .collect(Collectors.toList());
+        to = List.of(parts);
+        numAcceptedTo = to
+                .stream()
+                .filter(p -> acceptHook.hook(p))
+                .count();
         if (to.size() == 0) {
             reset();
             return errorResponse();
         }
         List<String> unknownTo = to.stream()
-            .filter(p -> !isKnownHook.hook(p))
-            .map(AddressParser::getUsername)
-            .collect(Collectors.toList());
+                .filter(p -> acceptHook.hook(p) && !isKnownHook.hook(p))
+                .map(AddressParser::getUsername)
+                .collect(Collectors.toList());
         if (unknownTo.size() > 0) {
             reset();
             return specialErrorResponse(String.format("unknown recipient(s) %s",
-                String.join(", ", unknownTo)));
+                    String.join(", ", unknownTo)));
         }
         return okResponse();
     }
@@ -92,8 +94,8 @@ public final class DMTPToInstruction extends InstructionBase
     @Override
     public String getValue() {
         return to
-            .stream()
-            .map(String::valueOf)
-            .collect(Collectors.joining(","));
+                .stream()
+                .map(String::valueOf)
+                .collect(Collectors.joining(","));
     }
 }

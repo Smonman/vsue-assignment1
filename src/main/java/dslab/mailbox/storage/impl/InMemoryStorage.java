@@ -31,7 +31,7 @@ public final class InMemoryStorage implements Storage {
     public synchronized void store(final DMTPMessage message) {
         int id = getNextId(message);
         silo.put(TwoPartKey.of(id, message),
-            new IdMessagePair(id, message));
+                new IdMessagePair(id, message));
     }
 
     @Override
@@ -47,9 +47,9 @@ public final class InMemoryStorage implements Storage {
     @Override
     public synchronized List<IdMessagePair> getAll(final String username) {
         return getAllKeysOfUser(username)
-            .stream()
-            .map(silo::get)
-            .collect(Collectors.toList());
+                .stream()
+                .map(silo::get)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -58,20 +58,20 @@ public final class InMemoryStorage implements Storage {
     }
 
     private int getNextId(final DMTPMessage message) {
-        String username = AddressParser.getUsername(message.getTo());
+        String username = AddressParser.getUsername(message.getPrimaryTo());
         return silo
-            .keySet()
-            .stream()
-            .filter(k -> ((TwoPartKey) k).getUsername().equals(username))
-            .map(k -> ((TwoPartKey) k).getId())
-            .reduce(0, Integer::max) + 1;
+                .keySet()
+                .stream()
+                .filter(k -> ((TwoPartKey) k).getUsername().equals(username))
+                .map(k -> ((TwoPartKey) k).getId())
+                .reduce(0, Integer::max) + 1;
     }
 
     private List<Key> getAllKeysOfUser(final String username) {
         return silo
-            .keySet()
-            .stream()
-            .filter(k -> ((TwoPartKey) k).getUsername().equals(username))
-            .collect(Collectors.toList());
+                .keySet()
+                .stream()
+                .filter(k -> ((TwoPartKey) k).getUsername().equals(username))
+                .collect(Collectors.toList());
     }
 }

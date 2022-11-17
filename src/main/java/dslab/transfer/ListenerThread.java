@@ -60,7 +60,7 @@ public final class ListenerThread extends Thread implements CloseableResource {
                 producerPool.execute(new DMTPReaderThread(
                         socket, messageQueue, socketManager));
             } catch (SocketException e) {
-                LOG.error("SocketException while handling socket", e);
+                LOG.warn("SocketException while handling socket", e);
                 break;
             } catch (IOException e) {
                 throw new UncheckedIOException(e);

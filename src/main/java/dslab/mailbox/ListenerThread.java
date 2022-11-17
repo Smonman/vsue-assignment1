@@ -56,7 +56,7 @@ public final class ListenerThread extends Thread
                         ReaderThreadFactory.createReaderThread(readerThreadType,
                                 socket, config, userLookup, storage, socketManager));
             } catch (SocketException e) {
-                LOG.error("SocketException while handling socket", e);
+                LOG.warn("SocketException while handling socket", e);
                 break;
             } catch (IOException e) {
                 throw new UncheckedIOException(e);

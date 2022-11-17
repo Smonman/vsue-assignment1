@@ -88,7 +88,7 @@ public final class DMTPReaderThread extends ManagedThread {
                 }
             }
         } catch (SocketException e) {
-            LOG.error("SocketException while handling socket", e);
+            LOG.warn("SocketException while handling socket", e);
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         } catch (InvalidInstructionException e) {

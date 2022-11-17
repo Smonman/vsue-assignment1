@@ -5,14 +5,10 @@ import dslab.util.Config;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
-import java.net.SocketException;
-import java.net.UnknownHostException;
+import java.net.*;
 
 public final class TrafficStatisticRunnable
-    implements Runnable, CloseableResource {
+        implements Runnable, CloseableResource {
 
     private final String host;
     private final int port;
@@ -40,12 +36,12 @@ public final class TrafficStatisticRunnable
             socket = new DatagramSocket();
             buffer = createPacketData().getBytes();
             packet = new DatagramPacket(buffer,
-                buffer.length,
-                InetAddress.getByName(monitoringHost),
-                monitoringPort);
+                    buffer.length,
+                    InetAddress.getByName(monitoringHost),
+                    monitoringPort);
             socket.send(packet);
         } catch (SocketException e) {
-            LOG.error("SocketException while handling socket", e);
+            LOG.warn("SocketException while handling socket", e);
         } catch (UnknownHostException e) {
             LOG.error("Cannot connect to host", e);
         } catch (IOException e) {

@@ -99,7 +99,7 @@ public final class DMTPForwarderThread extends Thread
         } catch (UnknownHostException e) {
             LOG.error("Cannot connect to host", e);
         } catch (SocketException e) {
-            LOG.error("SocketException while handling socket", e);
+            LOG.warn("SocketException while handling socket", e);
         } catch (InterruptedException e) {
             LOG.warn("An interrupt occurred", e);
         } catch (IOException e) {

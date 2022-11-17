@@ -26,7 +26,7 @@ import java.util.Arrays;
 public class ListenerThread extends Thread implements CloseableResource {
 
     private static final Log LOG =
-        LogFactory.getLog(MethodHandles.lookup().lookupClass());
+            LogFactory.getLog(MethodHandles.lookup().lookupClass());
     private final DatagramSocket datagramSocket;
     private final Storage addressStorage;
     private final Storage serverStorage;
@@ -49,13 +49,13 @@ public class ListenerThread extends Thread implements CloseableResource {
                 packet = new DatagramPacket(buffer, buffer.length);
                 datagramSocket.receive(packet);
                 addressStorage.increment(
-                    PacketDataParser.getAddress(getPacketData(packet)));
+                        PacketDataParser.getAddress(getPacketData(packet)));
                 serverStorage.increment(
-                    PacketDataParser.getHostPortPair(getPacketData(packet)));
+                        PacketDataParser.getHostPortPair(getPacketData(packet)));
             }
         } catch (SocketException e) {
-            LOG.error("An error occurred while waiting for or handling packet",
-                e);
+            LOG.warn("An error occurred while waiting for or handling packet",
+                    e);
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         } finally {
@@ -65,7 +65,7 @@ public class ListenerThread extends Thread implements CloseableResource {
 
     private String getPacketData(DatagramPacket packet) {
         return new String(
-            Arrays.copyOfRange(packet.getData(), 0, packet.getLength()),
-            StandardCharsets.UTF_8);
+                Arrays.copyOfRange(packet.getData(), 0, packet.getLength()),
+                StandardCharsets.UTF_8);
     }
 }
